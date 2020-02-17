@@ -1,7 +1,7 @@
 # recipe-store
 Collect recipes that get sent to my gmail and rate them/add additional instructions for changes made. 
 
-Initially look for emails from mikenewman3@gmail.com and in INBOX.
+Initially look for emails from example@gmail.com and in INBOX.
 Get each message to see if there is a link in it.
 If there is a link, store the link in the DB & retrieve information from the website.
 
