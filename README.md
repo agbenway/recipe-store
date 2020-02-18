@@ -1,4 +1,4 @@
-# recipe-store
+# recipe-parent
 Collect recipes that get sent to my gmail and rate them/add additional instructions for changes made. 
 
 Initially look for emails from example@gmail.com and in INBOX.
