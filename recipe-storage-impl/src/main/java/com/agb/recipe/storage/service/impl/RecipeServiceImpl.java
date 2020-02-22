@@ -9,26 +9,41 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import com.agb.recipe.storage.domain.Recipe;
 import com.agb.recipe.storage.exception.RecipeNotFoundException;
 import com.agb.recipe.storage.jpa.domain.RecipeEntity;
 import com.agb.recipe.storage.jpa.repository.RecipeRepository;
+import com.agb.recipe.storage.service.RecipeService;
 
-@Service(RecipeStorageServiceImpl.NAME)
-public class RecipeStorageServiceImpl
+@Service(RecipeServiceImpl.NAME)
+public class RecipeServiceImpl implements RecipeService
 {
-    public static final String NAME = "recipeStorageServiceImpl";
+    public static final String NAME = "recipeService";
+
+    @Autowired
+    public ConversionService recipeConverter;
 
     @Autowired
     public RecipeRepository recipeRepository;
 
-    RecipeStorageServiceImpl(RecipeRepository recipeRepository)
+    RecipeServiceImpl(RecipeRepository recipeRepository)
     {
         this.recipeRepository = recipeRepository;
     }
 
+    @Override
+    public Recipe retireveMostRecentRecipe ()
+    {
+        RecipeEntity recipeEntity = recipeRepository.findFirstByOrderByEmailDateTimeDesc();
+        Recipe recipe = recipeConverter.convert(recipeEntity, Recipe.class);
+
+        return recipe;
+    }
+
+    @Override
     public void storeRecipe (Recipe recipe) throws RecipeNotFoundException
     {
         if (recipe != null && StringUtils.isNotBlank(recipe.getLink()))
@@ -40,7 +55,7 @@ public class RecipeStorageServiceImpl
             }
             catch (IOException ex)
             {
-                throw new RecipeNotFoundException("Recipe is no longer there.", ex);
+                throw new RecipeNotFoundException("Recipe is no longer avaliable.", ex);
             }
 
             RecipeEntity entity = new RecipeEntity();
@@ -48,6 +63,7 @@ public class RecipeStorageServiceImpl
             entity.setName(doc.title());
             entity.setDescription(getMetaTag(doc, "description"));
             entity.setLink(recipe.getLink());
+            entity.setEmailDateTime(recipe.getMessageDate());
             entity = recipeRepository.saveAndFlush(entity);
 
             System.out.println("RecipeID: " + entity.getId());

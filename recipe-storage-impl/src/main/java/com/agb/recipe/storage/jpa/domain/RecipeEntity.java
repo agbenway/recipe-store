@@ -1,5 +1,6 @@
 package com.agb.recipe.storage.jpa.domain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -10,8 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.agb.recipe.storage.jpa.domain.converter.UUIDConverter;
 
 @Entity
 @Table(name = "RECIPE")
@@ -25,6 +24,7 @@ public class RecipeEntity
     private String name;
     private String description;
     private String link;
+    private LocalDateTime emailDateTime;
 
     @Id
     @Column(name = "RECIPE_ID", nullable = false)
@@ -81,6 +81,17 @@ public class RecipeEntity
     public void setLink (String link)
     {
         this.link = link;
+    }
+
+    @Column(name = "EMAIL_DATE_TIME", nullable = false)
+    public LocalDateTime getEmailDateTime ()
+    {
+        return emailDateTime;
+    }
+
+    public void setEmailDateTime (LocalDateTime emailDateTime)
+    {
+        this.emailDateTime = emailDateTime;
     }
 
 }

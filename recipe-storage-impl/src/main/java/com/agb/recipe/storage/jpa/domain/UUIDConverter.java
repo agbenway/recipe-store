@@ -1,4 +1,4 @@
-package com.agb.recipe.storage.jpa.domain.converter;
+package com.agb.recipe.storage.jpa.domain;
 
 import java.util.UUID;
 

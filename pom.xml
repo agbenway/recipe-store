@@ -23,6 +23,7 @@
 		<module>recipe-reader</module>
 		<module>recipe-reader-impl</module>
 		<module>recipe-storage</module>
+		<module>recipe-storage-impl</module>
 	</modules>
 
 	<dependencyManagement>
@@ -46,6 +47,11 @@
 			<dependency>
 				<groupId>com.agb.recipe</groupId>
 				<artifactId>recipe-storage</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.agb.recipe</groupId>
+				<artifactId>recipe-storage-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -103,6 +109,11 @@
 				<groupId>org.jsoup</groupId>
 				<artifactId>jsoup</artifactId>
 				<version>1.12.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.30</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
