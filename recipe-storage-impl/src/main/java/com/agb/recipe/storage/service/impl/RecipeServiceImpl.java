@@ -1,18 +1,19 @@
 package com.agb.recipe.storage.service.impl;
 
 import java.io.IOException;
-import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import com.agb.recipe.storage.domain.Recipe;
+import com.agb.recipe.storage.domain.RecipeDto;
+import com.agb.recipe.storage.exception.DuplicateRecipeException;
 import com.agb.recipe.storage.exception.RecipeNotFoundException;
 import com.agb.recipe.storage.jpa.domain.RecipeEntity;
 import com.agb.recipe.storage.jpa.repository.RecipeRepository;
@@ -22,6 +23,8 @@ import com.agb.recipe.storage.service.RecipeService;
 public class RecipeServiceImpl implements RecipeService
 {
     public static final String NAME = "recipeService";
+
+    private static Logger log = LoggerFactory.getLogger(RecipeServiceImpl.class);
 
     @Autowired
     public ConversionService recipeConverter;
@@ -35,40 +38,52 @@ public class RecipeServiceImpl implements RecipeService
     }
 
     @Override
-    public Recipe retireveMostRecentRecipe ()
+    public RecipeDto retireveMostRecentRecipe ()
     {
-        RecipeEntity recipeEntity = recipeRepository.findFirstByOrderByEmailDateTimeDesc();
-        Recipe recipe = recipeConverter.convert(recipeEntity, Recipe.class);
+        RecipeEntity recipeEntity = recipeRepository.findFirstByOrderByEmailDateDesc();
+        RecipeDto recipe = recipeConverter.convert(recipeEntity, RecipeDto.class);
 
         return recipe;
     }
 
     @Override
-    public void storeRecipe (Recipe recipe) throws RecipeNotFoundException
+    public void createRecipe (RecipeDto recipe) throws RecipeNotFoundException, DuplicateRecipeException
     {
-        if (recipe != null && StringUtils.isNotBlank(recipe.getLink()))
+        RecipeEntity entity = recipeRepository.findByLink(recipe.getLink());
+        if (entity != null)
         {
-            Document doc = null;
-            try
-            {
-                doc = Jsoup.connect(recipe.getLink()).get();
-            }
-            catch (IOException ex)
-            {
-                throw new RecipeNotFoundException("Recipe is no longer avaliable.", ex);
-            }
-
-            RecipeEntity entity = new RecipeEntity();
-            entity.setGuid(UUID.randomUUID());
-            entity.setName(doc.title());
-            entity.setDescription(getMetaTag(doc, "description"));
-            entity.setLink(recipe.getLink());
-            entity.setEmailDateTime(recipe.getMessageDate());
-            entity = recipeRepository.saveAndFlush(entity);
-
-            System.out.println("RecipeID: " + entity.getId());
+            throw new DuplicateRecipeException("Recipe already exists.");
         }
 
+        Document doc = null;
+        try
+        {
+            doc = Jsoup.connect(recipe.getLink()).get();
+        }
+        catch (IOException ex)
+        {
+            throw new RecipeNotFoundException("Recipe is no longer avaliable.", ex);
+        }
+
+        entity = new RecipeEntity();
+        entity.setTitle(doc.title());
+        entity.setDescription(getMetaTag(doc, "description"));
+        entity.setLink(recipe.getLink());
+        entity.setEmailDate(recipe.getMessageDate());
+        entity = recipeRepository.saveAndFlush(entity);
+
+        log.debug("Created RecipeId: {}, Title: {}", entity.getId(), entity.getTitle());
+    }
+
+    @Override
+    public RecipeDto retrieveRecipe (Long recipeId) throws RecipeNotFoundException
+    {
+        RecipeEntity recipeEntity = recipeRepository.findById(recipeId)
+                .orElseThrow( () -> new RecipeNotFoundException("Recipe with ID " + recipeId + " not found."));
+
+        RecipeDto recipe = recipeConverter.convert(recipeEntity, RecipeDto.class);
+
+        return recipe;
     }
 
     private static String getMetaTag (Document document, String attr)

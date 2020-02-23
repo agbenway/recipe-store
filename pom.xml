@@ -24,6 +24,7 @@
 		<module>recipe-reader-impl</module>
 		<module>recipe-storage</module>
 		<module>recipe-storage-impl</module>
+		<module>recipe-controller</module>
 	</modules>
 
 	<dependencyManagement>
@@ -52,6 +53,11 @@
 			<dependency>
 				<groupId>com.agb.recipe</groupId>
 				<artifactId>recipe-storage-impl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.agb.recipe</groupId>
+				<artifactId>recipe-controller</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

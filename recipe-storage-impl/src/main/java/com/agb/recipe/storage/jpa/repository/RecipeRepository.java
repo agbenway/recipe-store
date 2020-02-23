@@ -10,5 +10,7 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long>
 {
     // @Query("SELECT r FROM RecipeEntity r "
     // + "ORDER BY r.emailDateTime ASC")
-    RecipeEntity findFirstByOrderByEmailDateTimeDesc ();
+    RecipeEntity findFirstByOrderByEmailDateDesc ();
+
+    RecipeEntity findByLink (String link);
 }

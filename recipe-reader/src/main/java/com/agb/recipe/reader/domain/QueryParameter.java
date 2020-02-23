@@ -1,40 +1,40 @@
 package com.agb.recipe.reader.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class QueryParameter
 {
-    private LocalDateTime lastRetrievedDate;
-    private String fromAddress;
+    private LocalDate lastRetrievedDate;
+    private String searchAddress;
 
-    public QueryParameter(LocalDateTime lastRetrievedDate)
+    public QueryParameter(LocalDate lastRetrievedDate)
     {
         this.lastRetrievedDate = lastRetrievedDate;
     }
 
-    public QueryParameter(LocalDateTime lastRetrievedDate, String fromAddress)
+    public QueryParameter(LocalDate lastRetrievedDate, String searchAddress)
     {
         this.lastRetrievedDate = lastRetrievedDate;
-        this.fromAddress = fromAddress;
+        this.searchAddress = searchAddress;
     }
 
-    public LocalDateTime getLastRetrievedDate ()
+    public LocalDate getLastRetrievedDate ()
     {
         return lastRetrievedDate;
     }
 
-    public void setLastRetrievedDate (LocalDateTime lastRetrievedDate)
+    public void setLastRetrievedDate (LocalDate lastRetrievedDate)
     {
         this.lastRetrievedDate = lastRetrievedDate;
     }
 
-    public String getFromAddress ()
+    public String getSearchAddress ()
     {
-        return fromAddress;
+        return searchAddress;
     }
 
-    public void setFromAddress (String fromAddress)
+    public void setSearchAddress (String searchAddress)
     {
-        this.fromAddress = fromAddress;
+        this.searchAddress = searchAddress;
     }
 }

@@ -1,6 +1,6 @@
 package com.agb.recipe.service.impl;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +16,7 @@ import com.agb.recipe.reader.domain.QueryParameter;
 import com.agb.recipe.reader.domain.RecipeMessage;
 import com.agb.recipe.reader.exception.MessageNotFoundException;
 import com.agb.recipe.reader.service.ReaderService;
-import com.agb.recipe.storage.domain.Recipe;
-import com.agb.recipe.storage.exception.RecipeNotFoundException;
+import com.agb.recipe.storage.domain.RecipeDto;
 import com.agb.recipe.storage.service.RecipeService;
 
 @Component
@@ -42,8 +41,8 @@ public class RecipeInitalizer
     @PostConstruct
     public void initializeRecipes ()
     {
-        Recipe recipe = recipeService.retireveMostRecentRecipe();
-        LocalDateTime lastRetrievedDate = null;
+        RecipeDto recipe = recipeService.retireveMostRecentRecipe();
+        LocalDate lastRetrievedDate = null;
 
         if (recipe != null)
         {
@@ -65,13 +64,12 @@ public class RecipeInitalizer
     }
 
     @Scheduled(fixedRate = 3600000) // 1 hour
-    // @Scheduled(fixedRate = 300000) // 5 min
     public void scheduledRecipeCheck ()
     {
         List<RecipeMessage> recipeMessages = new ArrayList<>();
         try
         {
-            QueryParameter queryParmeter = new QueryParameter(LocalDateTime.now().minusHours(1));
+            QueryParameter queryParmeter = new QueryParameter(LocalDate.now().minusDays(1));
             recipeMessages = gmailReaderService.retrieveRecipeMessages(queryParmeter);
         }
         catch (MessageNotFoundException ex)
@@ -86,16 +84,16 @@ public class RecipeInitalizer
     {
         for (RecipeMessage recipeMessage : recipeMessages)
         {
-            Recipe recipeDto = new Recipe();
+            RecipeDto recipeDto = new RecipeDto();
             recipeDto.setLink(recipeMessage.getLink());
             recipeDto.setMessageId(recipeMessage.getMessageId());
             recipeDto.setMessageDate(recipeMessage.getMessageDate());
 
             try
             {
-                recipeService.storeRecipe(recipeDto);
+                recipeService.createRecipe(recipeDto);
             }
-            catch (RecipeNotFoundException ex)
+            catch (Exception ex)
             {
                 log.info("Exception caught in initializing recipes: {}", ex.getMessage());
             }
