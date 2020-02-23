@@ -1,25 +1,24 @@
 package com.agb.recipe.storage.domain;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.LocalDate;
 
-public class Recipe
+public class RecipeDto
 {
-    private UUID recipeGuid;
+    private Long recipeId;
     private String title;
     private String description;
     private String link;
-    private LocalDateTime messageDate;
+    private LocalDate messageDate;
     private String messageId;
 
-    public UUID getRecipeGuid ()
+    public Long getRecipeId ()
     {
-        return recipeGuid;
+        return recipeId;
     }
 
-    public void setRecipeGuid (UUID recipeGuid)
+    public void setRecipeId (Long recipeId)
     {
-        this.recipeGuid = recipeGuid;
+        this.recipeId = recipeId;
     }
 
     public String getTitle ()
@@ -52,12 +51,12 @@ public class Recipe
         this.messageId = messageId;
     }
 
-    public LocalDateTime getMessageDate ()
+    public LocalDate getMessageDate ()
     {
         return messageDate;
     }
 
-    public void setMessageDate (LocalDateTime messageDate)
+    public void setMessageDate (LocalDate messageDate)
     {
         this.messageDate = messageDate;
     }

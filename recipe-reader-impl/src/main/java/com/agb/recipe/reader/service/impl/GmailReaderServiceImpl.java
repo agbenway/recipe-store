@@ -1,6 +1,7 @@
 package com.agb.recipe.reader.service.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,8 +40,9 @@ public class GmailReaderServiceImpl implements ReaderService
     public static final String NAME = "gmailReaderService";
 
     private static final String GMAIL_USER_ID = "me";
-    private static final String URL_REG_EX = "((https?:\\/\\/)?(www[^\\.]?)\\.([\\w\\d]+)\\.(com|org|net|us|uk|edu)(\\/[^ ]*)?)";
-
+    // private static final String URL_REG_EX =
+    // "((https?:\\/\\/)?(www[^\\.]?)\\.([\\w\\d]+)\\.(com|org|net|us|uk|edu)(\\/[^ ]*)?)";
+    private static final String URL_REG_EX = "((https?:\\/\\/)(www[^\\.]?)?(.+)\\.(com|org|net|us|uk|edu)(\\/[^ ]*)?)";
     @Autowired
     public GmailConnection gmailConnection;
 
@@ -105,13 +107,13 @@ public class GmailReaderServiceImpl implements ReaderService
     {
         StringBuilder query = new StringBuilder();
 
-        String fromAddress = queryParmeter.getFromAddress();
+        String fromAddress = queryParmeter.getSearchAddress();
         if (fromAddress != null)
         {
-            query.append("from:").append(queryParmeter.getFromAddress());
+            query.append(queryParmeter.getSearchAddress());
         }
-        LocalDateTime lastRetrievedDate = queryParmeter.getLastRetrievedDate();
-        if (queryParmeter != null)
+        LocalDate lastRetrievedDate = queryParmeter.getLastRetrievedDate();
+        if (lastRetrievedDate != null)
         {
             query.append("after:")
                     .append(lastRetrievedDate.getYear())
@@ -135,8 +137,8 @@ public class GmailReaderServiceImpl implements ReaderService
                 RecipeMessage recipe = new RecipeMessage();
                 recipe.setMessageId(entry.getValue().getId());
 
-                LocalDateTime dateTime = parseEmailDateTime(entry.getValue().getPayload().getHeaders());
-                recipe.setMessageDate(dateTime);
+                LocalDate emailDate = parseEmailDate(entry.getValue().getPayload().getHeaders());
+                recipe.setMessageDate(emailDate);
 
                 recipe.setLink(link);
                 recipeMessages.add(recipe);
@@ -145,20 +147,20 @@ public class GmailReaderServiceImpl implements ReaderService
         return recipeMessages;
     }
 
-    private LocalDateTime parseEmailDateTime (List<MessagePartHeader> headers)
+    private LocalDate parseEmailDate (List<MessagePartHeader> headers)
     {
-        LocalDateTime dateTime = null;
+        LocalDate emailDate = null;
         for (MessagePartHeader header : headers)
         {
             if ("Date".equals(header.getName()))
             {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, d MMM yyyy HH:mm:ss Z");
-                dateTime = LocalDateTime.parse(header.getValue(), formatter);
+                emailDate = LocalDateTime.parse(header.getValue(), formatter).toLocalDate();
                 break;
             }
         }
 
-        return dateTime;
+        return emailDate;
     }
 
     private static String findUrl (Message message)

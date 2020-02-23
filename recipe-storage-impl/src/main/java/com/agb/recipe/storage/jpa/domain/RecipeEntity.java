@@ -1,7 +1,6 @@
 package com.agb.recipe.storage.jpa.domain;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -14,17 +13,16 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "RECIPE")
-@Converts(value = {
-        @Convert(attributeName = "uuid", converter = UUIDConverter.class)
-})
+// @Converts(value = {
+// @Convert(attributeName = "emailDate", converter = LocalDateAttributeConverter.class)
+// })
 public class RecipeEntity
 {
     private Long id;
-    private UUID guid;
-    private String name;
+    private String title;
     private String description;
     private String link;
-    private LocalDateTime emailDateTime;
+    private LocalDate emailDate;
 
     @Id
     @Column(name = "RECIPE_ID", nullable = false)
@@ -39,29 +37,18 @@ public class RecipeEntity
         this.id = id;
     }
 
-    @Column(name = "RECIPE_GUID", nullable = false)
-    public UUID getGuid ()
+    @Column(name = "TITLE", nullable = false)
+    public String getTitle ()
     {
-        return guid;
+        return title;
     }
 
-    public void setGuid (UUID guid)
+    public void setTitle (String title)
     {
-        this.guid = guid;
+        this.title = title;
     }
 
-    @Column(name = "NAME", nullable = false)
-    public String getName ()
-    {
-        return name;
-    }
-
-    public void setName (String name)
-    {
-        this.name = name;
-    }
-
-    @Column(name = "DESCRIPTION", nullable = true)
+    @Column(name = "DESCRIPTION", nullable = true, length = 500)
     public String getDescription ()
     {
         return description;
@@ -83,15 +70,15 @@ public class RecipeEntity
         this.link = link;
     }
 
-    @Column(name = "EMAIL_DATE_TIME", nullable = false)
-    public LocalDateTime getEmailDateTime ()
+    @Column(name = "EMAIL_DATE", nullable = false)
+    public LocalDate getEmailDate ()
     {
-        return emailDateTime;
+        return emailDate;
     }
 
-    public void setEmailDateTime (LocalDateTime emailDateTime)
+    public void setEmailDate (LocalDate emailDate)
     {
-        this.emailDateTime = emailDateTime;
+        this.emailDate = emailDate;
     }
 
 }

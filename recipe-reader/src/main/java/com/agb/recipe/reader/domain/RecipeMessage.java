@@ -1,11 +1,11 @@
 package com.agb.recipe.reader.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class RecipeMessage
 {
     private String messageId;
-    private LocalDateTime messageDate;
+    private LocalDate messageDate;
     private String link;
 
     public String getMessageId ()
@@ -18,14 +18,14 @@ public class RecipeMessage
         this.messageId = messageId;
     }
 
-    public LocalDateTime getMessageDate ()
+    public LocalDate getMessageDate ()
     {
         return messageDate;
     }
 
-    public void setMessageDate (LocalDateTime dateTime)
+    public void setMessageDate (LocalDate localDate)
     {
-        this.messageDate = dateTime;
+        this.messageDate = localDate;
     }
 
     public String getLink ()
