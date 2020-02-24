@@ -20,7 +20,7 @@ public class RecipeEntityToRecipeDtoConverter implements Converter<RecipeEntity,
             retval.setTitle(source.getTitle());
             retval.setDescription(source.getDescription());
             retval.setLink(source.getLink());
-            retval.setMessageDate(source.getEmailDate());
+            retval.setMessageDate(source.getAddedDate());
         }
 
         return retval;

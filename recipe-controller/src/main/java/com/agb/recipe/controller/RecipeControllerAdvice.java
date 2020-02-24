@@ -33,7 +33,7 @@ public class RecipeControllerAdvice
     @ResponseBody
     public ErrorResponse recipeNotFoundException (RecipeNotFoundException rnfEx)
     {
-        log.error("Duplicate Recipe Exception: {}", rnfEx.getMessage());
+        log.error("Recipe Not Found Exception: {}", rnfEx.getMessage());
 
         return new ErrorResponse(rnfEx.getMessage());
     }

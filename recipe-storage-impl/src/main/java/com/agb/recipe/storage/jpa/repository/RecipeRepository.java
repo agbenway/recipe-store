@@ -1,16 +1,18 @@
 package com.agb.recipe.storage.jpa.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.agb.recipe.storage.jpa.domain.RecipeEntity;
 
 @Repository
-public interface RecipeRepository extends JpaRepository<RecipeEntity, Long>
+public interface RecipeRepository extends PagingAndSortingRepository<RecipeEntity, Long>
 {
-    // @Query("SELECT r FROM RecipeEntity r "
-    // + "ORDER BY r.emailDateTime ASC")
-    RecipeEntity findFirstByOrderByEmailDateDesc ();
+    RecipeEntity findFirstByOrderByAddedDateDesc ();
 
-    RecipeEntity findByLink (String link);
+    Optional<RecipeEntity> findByLink (String link);
+
+    Optional<RecipeEntity> findByMessageId (String messageId);
 }

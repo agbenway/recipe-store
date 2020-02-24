@@ -3,8 +3,6 @@ package com.agb.recipe.storage.jpa.domain;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Converts;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,16 +11,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "RECIPE")
-// @Converts(value = {
-// @Convert(attributeName = "emailDate", converter = LocalDateAttributeConverter.class)
-// })
 public class RecipeEntity
 {
     private Long id;
     private String title;
     private String description;
     private String link;
-    private LocalDate emailDate;
+    private LocalDate addedDate;
+    private String messageId;
 
     @Id
     @Column(name = "RECIPE_ID", nullable = false)
@@ -70,15 +66,26 @@ public class RecipeEntity
         this.link = link;
     }
 
-    @Column(name = "EMAIL_DATE", nullable = false)
-    public LocalDate getEmailDate ()
+    @Column(name = "ADDED_DATE", nullable = false)
+    public LocalDate getAddedDate ()
     {
-        return emailDate;
+        return addedDate;
     }
 
-    public void setEmailDate (LocalDate emailDate)
+    public void setAddedDate (LocalDate addedDate)
     {
-        this.emailDate = emailDate;
+        this.addedDate = addedDate;
+    }
+
+    @Column(name = "MESSAGE_ID", nullable = true)
+    public String getMessageId ()
+    {
+        return messageId;
+    }
+
+    public void setMessageId (String messageId)
+    {
+        this.messageId = messageId;
     }
 
 }

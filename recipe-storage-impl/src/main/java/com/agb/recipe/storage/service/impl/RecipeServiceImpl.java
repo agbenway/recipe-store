@@ -2,6 +2,7 @@ package com.agb.recipe.storage.service.impl;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,9 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.agb.recipe.storage.converter.RecipeEntityToRecipeDtoConverter;
 import com.agb.recipe.storage.domain.RecipeDto;
+import com.agb.recipe.storage.domain.RecipeSearchRequest;
 import com.agb.recipe.storage.exception.DuplicateRecipeException;
 import com.agb.recipe.storage.exception.RecipeNotFoundException;
 import com.agb.recipe.storage.jpa.domain.RecipeEntity;
@@ -40,19 +46,26 @@ public class RecipeServiceImpl implements RecipeService
     @Override
     public RecipeDto retireveMostRecentRecipe ()
     {
-        RecipeEntity recipeEntity = recipeRepository.findFirstByOrderByEmailDateDesc();
+        RecipeEntity recipeEntity = recipeRepository.findFirstByOrderByAddedDateDesc();
         RecipeDto recipe = recipeConverter.convert(recipeEntity, RecipeDto.class);
 
         return recipe;
     }
 
     @Override
-    public void createRecipe (RecipeDto recipe) throws RecipeNotFoundException, DuplicateRecipeException
+    public RecipeDto createRecipe (RecipeDto recipe) throws RecipeNotFoundException, DuplicateRecipeException
     {
-        RecipeEntity entity = recipeRepository.findByLink(recipe.getLink());
-        if (entity != null)
+        RecipeEntity entity = null;
+        if (StringUtils.isNotBlank(recipe.getMessageId()))
         {
-            throw new DuplicateRecipeException("Recipe already exists.");
+            if (recipeRepository.findByMessageId(recipe.getMessageId()).isPresent())
+            {
+                throw new DuplicateRecipeException("Recipe messageId already exists.");
+            }
+        }
+        else if (recipeRepository.findByLink(recipe.getLink()).isPresent())
+        {
+            throw new DuplicateRecipeException("Recipe link already exists.");
         }
 
         Document doc = null;
@@ -69,10 +82,15 @@ public class RecipeServiceImpl implements RecipeService
         entity.setTitle(doc.title());
         entity.setDescription(getMetaTag(doc, "description"));
         entity.setLink(recipe.getLink());
-        entity.setEmailDate(recipe.getMessageDate());
-        entity = recipeRepository.saveAndFlush(entity);
+        entity.setAddedDate(recipe.getMessageDate());
+        entity.setMessageId(recipe.getMessageId());
+        entity = recipeRepository.save(entity);
 
         log.debug("Created RecipeId: {}, Title: {}", entity.getId(), entity.getTitle());
+
+        RecipeDto retval = recipeConverter.convert(entity, RecipeDto.class);
+
+        return retval;
     }
 
     @Override
@@ -103,5 +121,18 @@ public class RecipeServiceImpl implements RecipeService
                 return s;
         }
         return null;
+    }
+
+    @Override
+    public Page<RecipeDto> retrieveRecipes (RecipeSearchRequest request)
+    {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), request.getSortDirection(),
+                request.getSortBy());
+
+        Page<RecipeEntity> entities = recipeRepository.findAll(pageable);
+
+        Page<RecipeDto> recipes = entities.map(new RecipeEntityToRecipeDtoConverter()::convert);
+
+        return recipes;
     }
 }

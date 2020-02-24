@@ -40,8 +40,6 @@ public class GmailReaderServiceImpl implements ReaderService
     public static final String NAME = "gmailReaderService";
 
     private static final String GMAIL_USER_ID = "me";
-    // private static final String URL_REG_EX =
-    // "((https?:\\/\\/)?(www[^\\.]?)\\.([\\w\\d]+)\\.(com|org|net|us|uk|edu)(\\/[^ ]*)?)";
     private static final String URL_REG_EX = "((https?:\\/\\/)(www[^\\.]?)?(.+)\\.(com|org|net|us|uk|edu)(\\/[^ ]*)?)";
     @Autowired
     public GmailConnection gmailConnection;
