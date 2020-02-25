@@ -8,6 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>recipe-storage</artifactId>
+	<name>Recipe Storage</name>
 
 	<dependencies>
 		<dependency>

@@ -5,10 +5,11 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class RecipeController
     @Autowired
     private ConversionService recipeConverter;
 
-    @RequestMapping(value = "/recipes", method = RequestMethod.POST)
+    @PostMapping(value = "/recipes")
     public @ResponseBody Recipe createRecipe (@Valid @RequestBody Recipe recipe) throws RecipeNotFoundException, DuplicateRecipeException
     {
         RecipeDto recipeDto = recipeConverter.convert(recipe, RecipeDto.class);
@@ -41,13 +42,13 @@ public class RecipeController
         return retval;
     }
 
-    @RequestMapping(value = "/recipes", method = RequestMethod.PUT)
+    @PutMapping(value = "/recipes")
     public void updateRecipeFeedback (@Valid @RequestBody Recipe recipe)
     {
         // recipeService.updateRecipeFeedback(recipe);
     }
 
-    @RequestMapping(value = "/recipes", method = RequestMethod.GET)
+    @GetMapping(value = "/recipes")
     public Page<Recipe> retrieveAllRecipes (@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size)
     {
@@ -59,7 +60,7 @@ public class RecipeController
         return recipes;
     }
 
-    @RequestMapping(value = "/recipes/{recipeId}", method = RequestMethod.GET)
+    @GetMapping(value = "/recipes/{recipeId}")
     public @ResponseBody Recipe retrieveRecipe (@PathVariable(value = "recipeId") Long recipeId) throws RecipeNotFoundException
     {
         RecipeDto recipeDto = recipeService.retrieveRecipe(recipeId);
