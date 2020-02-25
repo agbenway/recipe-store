@@ -3,6 +3,9 @@ package com.agb.recipe.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +39,21 @@ public class RecipeControllerAdvice
         log.error("Recipe Not Found Exception: {}", rnfEx.getMessage());
 
         return new ErrorResponse(rnfEx.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ErrorResponse methodArgumentNotValidException (MethodArgumentNotValidException manvEx)
+    {
+        log.error("Validation Exception: {}", manvEx.getMessage());
+
+        String errorMessage = null;
+        for (ObjectError error : manvEx.getBindingResult().getAllErrors())
+        {
+            errorMessage = error.getDefaultMessage();
+        }
+        return new ErrorResponse(errorMessage);
     }
 
     @ExceptionHandler(Exception.class)

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 public class Recipe
 {
     private Long recipeId;
-    @NotEmpty(message = "Please provide a URL")
+    @NotEmpty(message = "Please provide a link")
     private String link;
     private String title;
     private String description;

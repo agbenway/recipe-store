@@ -8,6 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>recipe-reader-impl</artifactId>
+	<name>Recipe Reader Implementation</name>
 
 	<dependencies>
 		<dependency>
